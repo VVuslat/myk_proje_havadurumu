@@ -1,0 +1,15 @@
+# Geçici dosyalar
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# IDE ve editör dosyaları
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (eğer ileride kullanılırsa)
+node_modules/
