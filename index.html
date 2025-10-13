@@ -8,18 +8,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Arka plan SVG bulut ve güneşler kaldırıldı -->
     <div class="container">
-        <h1>Hava Durumu</h1>
-        <!-- Şehir adı girişi -->
-        <input type="text" id="sehirInput" placeholder="Şehir adı giriniz">
-        <!-- Getir butonu -->
-        <button id="getirBtn">Getir</button>
-        <!-- Sonuç kutusu -->
-        <div id="sonuc"></div>
+        <div class="weather-card">
+            <div class="weather-header">
+                <img src="https://cdn-icons-png.flaticon.com/512/1116/1116453.png" alt="Bulut" class="weather-icon">
+                <h1>Hava Durumu</h1>
+            </div>
+            <div class="weather-form">
+                <input type="text" id="sehirInput" placeholder="Şehir adı giriniz">
+                <button id="getirBtn">Getir</button>
+            </div>
+            <div id="sonuc" class="weather-result"></div>
+        </div>
+        <footer>
+            <span>© 2025 MYK Proje | Tasarım: VVuslat</span>
+        </footer>
     </div>
-    <!-- script.js dosyasını bağlama -->
     <script src="script.js"></script>
-    <!-- SVG bulut ve güneşler kaldırıldı -->
 </body>
-</html>
