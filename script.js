@@ -5,60 +5,70 @@ const sehirInput = document.getElementById('sehirInput');
 const getirBtn = document.getElementById('getirBtn');
 const sonucDiv = document.getElementById('sonuc');
 
-// Türkçe karakterleri İngilizce karşılıklarına çeviren fonksiyon
+// Türkçe karakterleri İngilizce karşılıklarına çeviren fonksiyon (normalize + lowercase)
 function turkceKarakterleriDonustur(str) {
+    if (str == null) return '';
     const harfler = {
-        'ç': 'c', 'Ç': 'C',
-        'ğ': 'g', 'Ğ': 'G',
-        'ı': 'i', 'I': 'I',
-        'İ': 'I',
-        'ö': 'o', 'Ö': 'O',
-        'ş': 's', 'Ş': 'S',
-        'ü': 'u', 'Ü': 'U'
+        'ç':'c','Ç':'c',
+        'ğ':'g','Ğ':'g',
+        'ı':'i','I':'i','İ':'i',
+        'ö':'o','Ö':'o',
+        'ş':'s','Ş':'s',
+        'ü':'u','Ü':'u'
     };
-    return str.replace(/[çÇğĞıİöÖşŞüÜ]/g, function(x) { return harfler[x] || x; });
+    return String(str)
+        .replace(/[çÇğĞıIİöÖşŞüÜ]/g, x => harfler[x] || x)
+        .toLowerCase();
 }
 
-// "Getir" butonuna tıklanınca çalışacak fonksiyon
 getirBtn.addEventListener('click', async () => {
     let sehir = sehirInput.value.trim();
     if (!sehir) {
         sonucDiv.textContent = 'Lütfen bir şehir adı giriniz.';
         return;
     }
-    const apiSehir = turkceKarakterleriDonustur(sehir).toLowerCase();
+    const apiSehir = turkceKarakterleriDonustur(sehir);
     sonucDiv.textContent = 'Yükleniyor...';
 
     try {
-        // Yerel endpoint (FastAPI / Express vb. tarafından sunulan)
-        const response = await fetch('http://localhost:8000/weather');
+        // relative path önerilir (aynı origin)
+        const response = await fetch('/weather', {cache: 'no-store'});
+        console.log('Fetch /weather status:', response.status, response.statusText);
+
         if (!response.ok) {
-            sonucDiv.textContent = 'Sunucudan veri alınamadı.';
+            // sunucu HTML hata sayfası ya da 404 döndü
+            const text = await response.text().catch(()=>'<no body>');
+            console.error('Sunucu hatası:', response.status, text);
+            sonucDiv.textContent = `Sunucudan veri alınamadı (HTTP ${response.status}).`;
             return;
         }
-        const data = await response.json();
+
+        const data = await response.json().catch(err => { throw new Error('JSON parse hatası: ' + err.message); });
+        console.log('Weather data length:', Array.isArray(data) ? data.length : typeof data, data);
+
         if (!Array.isArray(data)) {
             sonucDiv.textContent = 'Beklenmeyen sunucu yanıtı.';
             return;
         }
 
-        // DB'deki şehir adlarını da normalize edip eşleştiriyoruz
         const matched = data.find(item =>
-            turkceKarakterleriDonustur(String(item.city || '')).toLowerCase() === apiSehir
+            turkceKarakterleriDonustur(String(item.city || '')) === apiSehir
         );
 
         if (!matched) {
+            // debug: mevcut şehirleri göster (normalize edilmiş)
+            const available = data.map(i => turkceKarakterleriDonustur(String(i.city || ''))).slice(0,20);
+            console.warn('Şehir bulunamadı. Kullanılabilir (normalize):', available);
             sonucDiv.textContent = 'Şehir bulunamadı.';
             return;
         }
 
-        // matched.temperature integer, description string beklenir
         const temp = matched.temperature !== undefined ? `${matched.temperature}°C` : '—';
         const desc = matched.description || '—';
 
         sonucDiv.innerHTML = `<strong>${sehir}</strong><br>Sıcaklık: ${temp}<br>Açıklama: ${desc}`;
     } catch (error) {
-        console.error(error);
+        console.error('İşlem hatası:', error);
         sonucDiv.textContent = 'Bir hata oluştu. Lütfen tekrar deneyiniz.';
     }
 });

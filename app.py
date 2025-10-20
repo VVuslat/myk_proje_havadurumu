@@ -1,25 +1,36 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import sqlite3
 import os
 from typing import List, Dict
-from fastapi.staticfiles import StaticFiles
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "mock_weather.db")
+ROOT = os.path.dirname(__file__)
+DB_PATH = os.path.join(ROOT, "mock_weather.db")
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # geliştirme: prod'da daraltın
+    allow_origins=["*"],  # geliştirme için, prod'da kısıtlayın
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.mount("/", StaticFiles(directory=os.path.dirname(__file__), html=True), name="static")
+# statik dosyaları /static altında servis et
+app.mount("/static", StaticFiles(directory=ROOT), name="static")
+
+# kök istek için index.html döndür
+@app.get("/")
+def read_index():
+    index_path = os.path.join(ROOT, "index.html")
+    return FileResponse(index_path)
 
 def fetch_all() -> List[Dict]:
+    if not os.path.exists(DB_PATH):
+        return []
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
@@ -29,17 +40,6 @@ def fetch_all() -> List[Dict]:
     return rows
 
 @app.get("/weather")
+
 def get_weather():
-    return fetch_all()    # ...existing code...
-    @app.get("/")
-    def root():
-        return {"detail": "Uygulama çalışıyor. /weather endpoint'i mevcut."}
-    # ...existing code...    # ...existing code...
-    @app.get("/")
-    def root():
-        return {"detail": "Uygulama çalışıyor. /weather endpoint'i mevcut."}
-    # ...existing code...    # ...existing code...
-    @app.get("/")
-    def root():
-        return {"detail": "Uygulama çalışıyor. /weather endpoint'i mevcut."}
-    # ...existing code...
+    return fetch_all()
