@@ -7,7 +7,6 @@ const sonucDiv = document.getElementById('sonuc');
 
 // Türkçe karakterleri İngilizce karşılıklarına çeviren fonksiyon
 function turkceKarakterleriDonustur(str) {
-    // Küçük ve büyük harfler için eşleştirme
     const harfler = {
         'ç': 'c', 'Ç': 'C',
         'ğ': 'g', 'Ğ': 'G',
@@ -17,37 +16,49 @@ function turkceKarakterleriDonustur(str) {
         'ş': 's', 'Ş': 'S',
         'ü': 'u', 'Ü': 'U'
     };
-    // Her karakteri kontrol edip gerekirse değiştiriyoruz
     return str.replace(/[çÇğĞıİöÖşŞüÜ]/g, function(x) { return harfler[x] || x; });
 }
 
 // "Getir" butonuna tıklanınca çalışacak fonksiyon
 getirBtn.addEventListener('click', async () => {
-    // Kullanıcının girdiği şehir adını alıyoruz
     let sehir = sehirInput.value.trim();
-    // Eğer input boşsa uyarı veriyoruz
     if (!sehir) {
         sonucDiv.textContent = 'Lütfen bir şehir adı giriniz.';
         return;
     }
-    // Türkçe karakterleri dönüştürüyoruz
-    const apiSehir = turkceKarakterleriDonustur(sehir);
-    // Sonucu temizliyoruz
+    const apiSehir = turkceKarakterleriDonustur(sehir).toLowerCase();
     sonucDiv.textContent = 'Yükleniyor...';
+
     try {
-        // API isteğini yapıyoruz (HTTPS ile)
-        const response = await fetch(`https://goweather.xyz/weather/${apiSehir}`);
-        // Gelen veriyi JSON olarak alıyoruz
+        // Yerel endpoint (FastAPI / Express vb. tarafından sunulan)
+        const response = await fetch('http://localhost:8000/weather');
+        if (!response.ok) {
+            sonucDiv.textContent = 'Sunucudan veri alınamadı.';
+            return;
+        }
         const data = await response.json();
-        // API "temperature" alanı boşsa şehir bulunamadı demektir
-        if (!data.temperature) {
+        if (!Array.isArray(data)) {
+            sonucDiv.textContent = 'Beklenmeyen sunucu yanıtı.';
+            return;
+        }
+
+        // DB'deki şehir adlarını da normalize edip eşleştiriyoruz
+        const matched = data.find(item =>
+            turkceKarakterleriDonustur(String(item.city || '')).toLowerCase() === apiSehir
+        );
+
+        if (!matched) {
             sonucDiv.textContent = 'Şehir bulunamadı.';
             return;
         }
-        // Sonucu ekrana yazdırıyoruz
-        sonucDiv.innerHTML = `<strong>${sehir}</strong><br>Sıcaklık: ${data.temperature}<br>Açıklama: ${data.description}`;
+
+        // matched.temperature integer, description string beklenir
+        const temp = matched.temperature !== undefined ? `${matched.temperature}°C` : '—';
+        const desc = matched.description || '—';
+
+        sonucDiv.innerHTML = `<strong>${sehir}</strong><br>Sıcaklık: ${temp}<br>Açıklama: ${desc}`;
     } catch (error) {
-        // Hata olursa uyarı veriyoruz
+        console.error(error);
         sonucDiv.textContent = 'Bir hata oluştu. Lütfen tekrar deneyiniz.';
     }
 });
