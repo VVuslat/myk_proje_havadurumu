@@ -1,9 +1,14 @@
 nohup: ignoring input
 INFO:     Will watch for changes in these directories: ['/workspaces/myk_proje_havadurumu']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [36405] using StatReload
-INFO:     Started server process [36424]
+INFO:     Started reloader process [77330] using StatReload
+INFO:     Started server process [77363]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     127.0.0.1:48096 - "GET /weather HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:48100 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35248 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35250 - "GET /static/script.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35254 - "GET /weather HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35268 - "GET /weather HTTP/1.1" 200 OK
+INFO:     24.133.192.154:0 - "GET / HTTP/1.1" 200 OK
+INFO:     24.133.192.154:0 - "GET /static/script.js HTTP/1.1" 304 Not Modified
+INFO:     24.133.192.154:0 - "GET /weather HTTP/1.1" 200 OK
