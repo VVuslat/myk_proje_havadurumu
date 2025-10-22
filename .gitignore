@@ -1,0 +1,6 @@
+# Local DB, logs, bytecode
+mock_weather.db
+uvicorn.log
+__pycache__/
+*.pyc
+.DS_Store
