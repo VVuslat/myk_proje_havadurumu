@@ -1,14 +1,15 @@
+import os
+import sqlite3
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import sqlite3
-import os
 from typing import List, Dict
 
 ROOT = os.path.dirname(__file__)
 DB_PATH = os.path.join(ROOT, "mock_weather.db")
 INDEX_PATH = os.path.join(ROOT, "index.html")
+STATIC_DIR = os.path.join(ROOT, "static")
 
 app = FastAPI()
 
@@ -20,8 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# statik dosyaları /static altında servis et
-app.mount("/static", StaticFiles(directory=ROOT), name="static")
+# statik dosyaları /static altında servis et (STATIC_DIR var ise)
+if os.path.isdir(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # kök istek için index.html döndür
 @app.get("/", include_in_schema=False)
