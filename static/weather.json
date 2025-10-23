@@ -1,0 +1,12 @@
+[
+  {"id":1,"city":"İstanbul","temperature":22,"description":"Parçalı Bulutlu"},
+  {"id":2,"city":"Ankara","temperature":18,"description":"Güneşli"},
+  {"id":3,"city":"İzmir","temperature":25,"description":"Güneşli"},
+  {"id":4,"city":"Antalya","temperature":28,"description":"Açık"},
+  {"id":5,"city":"Trabzon","temperature":17,"description":"Yağmurlu"},
+  {"id":6,"city":"Bursa","temperature":20,"description":"Rüzgarlı"},
+  {"id":7,"city":"Samsun","temperature":19,"description":"Bulutlu"},
+  {"id":8,"city":"Gaziantep","temperature":27,"description":"Açık ve Sıcak"},
+  {"id":9,"city":"Konya","temperature":23,"description":"Hafif Rüzgarlı"},
+  {"id":10,"city":"Erzurum","temperature":12,"description":"Soğuk ve Kapalı"}
+]
