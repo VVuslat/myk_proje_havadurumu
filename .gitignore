@@ -1,7 +1,24 @@
+## Local and IDE ignores
 # Local DB, logs, bytecode
 mock_weather.db
 uvicorn.log
 __pycache__/
 *.pyc
+
+# macOS / Windows
 .DS_Store
-__pycache__/
+Thumbs.db
+
+# temp / logs
+*.tmp
+*.log
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
