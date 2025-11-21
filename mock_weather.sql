@@ -20,4 +20,6 @@ INSERT INTO weather (city, temperature, description) VALUES
 ('Samsun', 19, 'Bulutlu'),
 ('Gaziantep', 27, 'Açık ve Sıcak'),
 ('Konya', 23, 'Hafif Rüzgarlı'),
-('Erzurum', 12, 'Soğuk ve Kapalı');
+('Erzurum', 12, 'Soğuk ve Kapalı')
+('Mersin', 22, 'Güneşli ve Sıcak');
+DELETE FROM weather WHERE city = 'Ankara';
